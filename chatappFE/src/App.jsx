@@ -17,6 +17,8 @@ const App = () => {
         <Route path="/profile" element={<Profile/>} />
         <Route path="*" element={<Navigate to="/auth" />} />
       </Routes>
+
+      <Button> click me </Button>
       </BrowserRouter>
     </>
 
