@@ -2,6 +2,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useState } from "react"
 import { Input } from '@/components/ui/input'
 import { Button } from "@/components/ui/button"
+import Victory from '@/assets/victory.svg';
+import { toast } from "sonner";
+import { apiClient } from "@/lib/api-client";
+import { SINGUP_ROUTE } from "@/utils/constants";
 
 
 const Auth = () => {
@@ -10,15 +14,32 @@ const Auth = () => {
   const [password, setpassword] = useState("")
   const [confirm, setconfirm] = useState("")
 
+  const validatesingup = () =>{
+    if(!email.length){
+      toast.error("email is required");
+      return false;
+    }
+    if(!password.length){
+      toast.error("password is required");
+      return false;
+    }
+    if(password !== confirm){
+      toast.error("password doesn't match");
+      return false;
+    }
+    return true;
+  }
 
   const HandleLogin = async () => {
 
   }
 
   const HandleSignup = async () => {
+    if(validatesingup()){
+      const response = apiClient.post(SINGUP_ROUTE, {email, password})
+      console.log({response});
 
-
-
+    }
   }
   return (
     <div className="h-[100vh] w-[100vw ] flex items-center justify-center">
@@ -27,6 +48,7 @@ const Auth = () => {
           <div className=" flex flex-col items-center justify-center ">
             <div className=" flex items-center justify-center ">
               <h1 className="text-5xl font-bold md:text-6xl"> WELCOME </h1>
+             {/* <img src={Victory} alt="" /> */}
             </div>
             <p className="font-medium text-center"> Fill the details to get started on the best chat app</p>
           </div>
