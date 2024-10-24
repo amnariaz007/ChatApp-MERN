@@ -3,6 +3,7 @@ const userModel = require('../models/userModel');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { tokenGenerator } = require("../utils/tokenGenerator");
+const mongoose = require('mongoose')
 
 
 
@@ -55,7 +56,6 @@ module.exports.loginUser = async (req, res) => {
 
       return res.send("Incorrect email or password");
     }
-
     console.log("userpassword", user.password);
     bcrypt.compare(password, user.password, function (err, result) {
       console.log("result", result)
@@ -63,7 +63,14 @@ module.exports.loginUser = async (req, res) => {
         let token = tokenGenerator(user);
         res.cookie("token", token);
         console.log('Redirecting to login');
-        res.status(200).json({ id: user._id, token: token });
+        return res.status(201).json({
+          user: {
+            id: user.id,
+            email: user.email,
+            profilesetup: user.profilesetup,
+            token: token
+          }
+        })
         //res.send("logged in");
       }
       else {
@@ -76,6 +83,32 @@ module.exports.loginUser = async (req, res) => {
     res.send(err.message);
   }
 }
+
+module.exports.userInfo = async (req, res) => {
+  try {
+    const user = req.user; // Use req.user set by the isLoggedIn middleware
+    console.log(user,"user")
+
+    return res.status(200).json({
+     
+        id: user._id,
+        email: user.email,
+        profilesetup: user.profilesetup,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        image: user.image,
+        color: user.color,
+      
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send(err.message);
+  }
+};
+
+
+
+
 
 module.exports.logout = function (req, res) {
   res.cookie("token", "");

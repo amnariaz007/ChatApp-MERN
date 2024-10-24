@@ -5,39 +5,71 @@ import { Button } from "@/components/ui/button"
 import Victory from '@/assets/victory.svg';
 import { toast } from "sonner";
 import { apiClient } from "@/lib/api-client";
-import { SINGUP_ROUTE } from "@/utils/constants";
+import { SINGUP_ROUTE, LOGIN_ROUTE } from "@/utils/constants";
+import { useNavigate } from "react-router-dom";
+import { useAppStore } from "@/store";
 
 
 const Auth = () => {
-
+  const navigate = useNavigate();
+  const {setuserInfo} = useAppStore();
   const [email, setemail] = useState("")
   const [password, setpassword] = useState("")
   const [confirm, setconfirm] = useState("")
 
-  const validatesingup = () =>{
-    if(!email.length){
+  const validatesingup = () => {
+    if (!email.length) {
       toast.error("email is required");
       return false;
     }
-    if(!password.length){
+    if (!password.length) {
       toast.error("password is required");
       return false;
     }
-    if(password !== confirm){
+    if (password !== confirm) {
       toast.error("password doesn't match");
       return false;
     }
     return true;
   }
 
-  const HandleLogin = async () => {
+  const validatelogin = () => {
+    if (!email.length) {
+      toast.error("email is required");
+      return false;
+    }
+    if (!password.length) {
+      toast.error("password is required");
+      return false;
+    }
+    return true;
+  }
 
+
+
+  const HandleLogin = async () => {
+    if (validatelogin()) {
+      const response = await apiClient.post(LOGIN_ROUTE, { email, password })
+      console.log({ response });
+      if (response.data.user.id) {
+        setuserInfo(response.data.user)
+        if(response.user.profilesetup){
+          navigate('/chat')
+        } else {
+          navigate('/profile')
+        }
+      }
+    }
   }
 
   const HandleSignup = async () => {
-    if(validatesingup()){
-      const response = apiClient.post(SINGUP_ROUTE, {email, password})
-      console.log({response});
+    if (validatesingup()) {
+      const response = await apiClient.post(SINGUP_ROUTE, { email, password })
+      console.log({ response });
+      if (response === 201) {
+        setuserInfo(response.data.user)
+        navigate('/profile')
+      }
 
     }
   }
@@ -48,12 +80,12 @@ const Auth = () => {
           <div className=" flex flex-col items-center justify-center ">
             <div className=" flex items-center justify-center ">
               <h1 className="text-5xl font-bold md:text-6xl"> WELCOME </h1>
-             {/* <img src={Victory} alt="" /> */}
+              {/* <img src={Victory} alt="" /> */}
             </div>
             <p className="font-medium text-center"> Fill the details to get started on the best chat app</p>
           </div>
           <div className="flex items-center justify-center w-full ">
-            <Tabs className="w-3/4" >
+            <Tabs defaultValue="Login" className="w-3/4" >
               <TabsList className="bg-transparent rounded-none w-full" >
                 <TabsTrigger className="data-[state=active]:bg-transparent text-black text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:border-b-purple-500 p-3 transition-all duration-300 "
                   value="Login">Login</TabsTrigger>
@@ -107,7 +139,7 @@ const Auth = () => {
           </div>
         </div>
         <div className="hidden xl:flex justify-center items-center">
-          
+
         </div>
       </div>
     </div>

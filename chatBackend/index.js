@@ -19,6 +19,7 @@ const port = process.env.PORT || 3001
 const db = process.env.MOONGODB_URI;
 
 //ApiRoutes
+
 app.use('/api/auth', authRoutes);
 
 const server = app.listen(port, ()=>{
