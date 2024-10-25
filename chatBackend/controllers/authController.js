@@ -194,6 +194,7 @@ module.exports.deleteProfile = async (req, res) => {
 
 
 
+
 module.exports.logout = function (req, res) {
   res.cookie("token", "");
   console.log('Redirecting to logout');
