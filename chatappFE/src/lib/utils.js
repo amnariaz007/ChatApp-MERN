@@ -7,7 +7,10 @@ export function cn(...inputs) {
 
 
 export const colors = [
-  "bg-[#712c4a57] text-[#ff006e] border-[1px] border-[#ff006faa] "
+  "bg-[#712c4a57] text-[#ff006e] border-[1px] border-[#ff006faa] ",
+  "bg-[#916c4a57] text-[#ff006e] border-[1px] border-[#fa006faa] ",
+  "bg-[#719c4a57] text-[#ff006e] border-[1px] border-[#fb006faa] ",
+  "bg-[#215c4a57] text-[#ff006e] border-[1px] border-[#fc006faa] ",
 ]
 
 export const getColor = (color) =>{

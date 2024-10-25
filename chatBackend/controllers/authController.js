@@ -86,7 +86,7 @@ module.exports.loginUser = async (req, res) => {
 
 module.exports.userInfo = async (req, res) => {
   try {
-    const user = req.user; // Use req.user set by the isLoggedIn middleware
+    const user = req.user; 
     console.log(user,"user")
 
     return res.status(200).json({
@@ -105,6 +105,75 @@ module.exports.userInfo = async (req, res) => {
     return res.status(500).send(err.message);
   }
 };
+
+module.exports.profileUpdate = async (req, res) => {
+  try {
+    const user = req.user; 
+    console.log(user, "user");
+
+    const { firstname, lastname, color } = req.body;
+
+    if (!firstname || !lastname) {
+      return res.status(400).send("First, last name, and color are required");
+    }
+
+    const userdata = await userModel.findByIdAndUpdate(
+      user._id, 
+      { firstname, lastname, color, profilesetup: true },
+      { new: true, runValidators: true }
+    );
+
+    return res.status(200).json({ data: userdata });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send(err.message);
+  }
+};
+
+
+module.exports.profilePicture = async (req, res) => {
+  try {
+    const user = req.user; 
+    console.log(user, "user");
+
+    const userdata = await userModel.findByIdAndUpdate(
+      user._id, 
+      { image },
+      { new: true, runValidators: true }
+    );
+
+    return res.status(200).json({ data: userdata });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send(err.message);
+  }
+};
+
+module.exports.deleteProfile = async (req, res) => {
+  try {
+    const user = req.user; 
+    console.log(user, "user");
+
+    const { firstname, lastname, color } = req.body;
+
+    if (!firstname || !lastname) {
+      return res.status(400).send("First, last name, and color are required");
+    }
+
+    const userdata = await userModel.findByIdAndUpdate(
+      user._id, 
+      { firstname, lastname, color, profilesetup: true },
+      { new: true, runValidators: true }
+    );
+
+    return res.status(200).json({ data: userdata });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send(err.message);
+  }
+};
+
+
 
 
 
