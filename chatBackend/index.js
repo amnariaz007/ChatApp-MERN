@@ -10,9 +10,11 @@ const authRoutes = require('./routes/AuthRoutes')
 //middlewares
 app.use(cors({
     origin: [process.env.ORIGIN],
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     credentials: true
 }));
+
+app.use("/uploads/profiles", express.static("uploads/profiles"))
 app.use(express.json());
 app.use(cookieparser());
 const port = process.env.PORT || 3001

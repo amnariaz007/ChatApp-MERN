@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { tokenGenerator } = require("../utils/tokenGenerator");
 const mongoose = require('mongoose')
+const { renameSync, unlinkSync } = require('fs');
 
 
 
@@ -31,7 +32,7 @@ module.exports.registerUser = async (req, res) => {
           res.cookie("token", token);
           //console.log('Redirecting to chat page');
 
-        return res.status(201).json({
+          return res.status(201).json({
             user: {
               id: user.id,
               email: user.email,
@@ -86,19 +87,19 @@ module.exports.loginUser = async (req, res) => {
 
 module.exports.userInfo = async (req, res) => {
   try {
-    const user = req.user; 
-    console.log(user,"user")
+    const user = req.user;
+    console.log(user, "user")
 
     return res.status(200).json({
-     
-        id: user._id,
-        email: user.email,
-        profilesetup: user.profilesetup,
-        firstname: user.firstname,
-        lastname: user.lastname,
-        image: user.image,
-        color: user.color,
-      
+
+      id: user._id,
+      email: user.email,
+      profilesetup: user.profilesetup,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      image: user.image,
+      color: user.color,
+
     });
   } catch (err) {
     console.error(err);
@@ -108,7 +109,7 @@ module.exports.userInfo = async (req, res) => {
 
 module.exports.profileUpdate = async (req, res) => {
   try {
-    const user = req.user; 
+    const user = req.user;
     console.log(user, "user");
 
     const { firstname, lastname, color } = req.body;
@@ -118,7 +119,7 @@ module.exports.profileUpdate = async (req, res) => {
     }
 
     const userdata = await userModel.findByIdAndUpdate(
-      user._id, 
+      user._id,
       { firstname, lastname, color, profilesetup: true },
       { new: true, runValidators: true }
     );
@@ -133,16 +134,29 @@ module.exports.profileUpdate = async (req, res) => {
 
 module.exports.profilePicture = async (req, res) => {
   try {
-    const user = req.user; 
-    console.log(user, "user");
+    const user = req.user;
+    if (!req.file) {
+      return res.status(400).send("File is required")
+    }
+    const date = Date.now()
+    let fileName = "uploads/profiles/" + date + req.file.originalname;
+    renameSync(req.file.path, fileName);
+
+
 
     const userdata = await userModel.findByIdAndUpdate(
-      user._id, 
-      { image },
+      user._id,
+      { image: fileName },
       { new: true, runValidators: true }
     );
 
-    return res.status(200).json({ data: userdata });
+    console.log(userdata, "userdata")
+
+    return res.status(200).json({
+
+      image: userdata.image,
+
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).send(err.message);
@@ -151,22 +165,23 @@ module.exports.profilePicture = async (req, res) => {
 
 module.exports.deleteProfile = async (req, res) => {
   try {
-    const user = req.user; 
-    console.log(user, "user");
+    const userid = req.user;
+    console.log(userid, "user");
 
-    const { firstname, lastname, color } = req.body;
+    const user = await userModel.findById(userid._id,)
 
-    if (!firstname || !lastname) {
-      return res.status(400).send("First, last name, and color are required");
+    if (!user) {
+      return res.status(400).send("there is no user")
     }
 
-    const userdata = await userModel.findByIdAndUpdate(
-      user._id, 
-      { firstname, lastname, color, profilesetup: true },
-      { new: true, runValidators: true }
-    );
+    if (user.image) {
+      unlinkSync(user.image);
+    }
 
-    return res.status(200).json({ data: userdata });
+    user.image = null;
+    await user.save();
+
+    return res.status(200).send("profile removed");
   } catch (err) {
     console.error(err);
     return res.status(500).send(err.message);

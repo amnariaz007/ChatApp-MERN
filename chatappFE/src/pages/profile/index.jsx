@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { apiClient } from "@/lib/api-client";
-import { UPDATE_PROFILE, PROFILE_PICTURE } from '../../utils/constants'
+import { UPDATE_PROFILE, PROFILE_PICTURE, HOST, DELETE_PROFILE } from '../../utils/constants'
 
 const Profile = () => {
 
@@ -27,11 +27,18 @@ const Profile = () => {
 
   useEffect(() => {
     if (userInfo) {
-      setfirstname(userInfo.firstname || "");
-      setlastname(userInfo.lastname || "");
-      setselectColor(userInfo.color || 0);
+        setfirstname(userInfo.firstname || "");
+        setlastname(userInfo.lastname || "");
+        setselectColor(userInfo.color || 0);
     }
-  }, [userInfo]);
+    if (userInfo && userInfo.image) {
+        const imagePath = `${HOST}${userInfo.image}`;
+        setimage(imagePath);
+    }
+}, [userInfo]);
+
+console.log(image, "image")
+
 
 
   const validateProfile = () => {
@@ -75,12 +82,13 @@ const Profile = () => {
 
   }
 
-  const handleAddImage = async (e) => {
-    const file = e.target.files[0]
+  const handleAddImage = async (event) => {
+    const file = event.target.files[0]
     console.log({ file });
 
     if (file) {
-      const formData = new formData();
+      const formData = new FormData();
+      console.log(formData, "formdata")
       formData.append('profile-image', file);
       try {
         const response = await apiClient.post(PROFILE_PICTURE, formData)
@@ -97,7 +105,18 @@ const Profile = () => {
   }
 
   const handleDeleteimage = async () => {
-
+    try {
+      const response = await apiClient.delete(DELETE_PROFILE)
+      console.log({ response });
+      if (response.status === 200) {
+        setuseinfor({ ...userInfo, image: null });
+        toast.success("image remove successfully")
+        setimage(null)
+      }
+    }
+    catch (err) {
+      console.log(err.message);
+    }
   }
 
 
