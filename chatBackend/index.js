@@ -5,6 +5,7 @@ const cors = require('cors');
 const cookieparser = require('cookie-parser');
 const { default: mongoose } = require('mongoose');
 const authRoutes = require('./routes/AuthRoutes')
+const contactRoutes = require('./routes/contactRoutes');
 
 
 //middlewares
@@ -23,6 +24,7 @@ const db = process.env.MOONGODB_URI;
 //ApiRoutes
 
 app.use('/api/auth', authRoutes);
+app.use('/api/contact/', contactRoutes)
 
 const server = app.listen(port, ()=>{
     console.log(`server is running at http://localhost:${port}`)
