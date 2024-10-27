@@ -188,15 +188,8 @@ module.exports.deleteProfile = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
-
 module.exports.logout = function (req, res) {
-  res.cookie("token", "");
+  res.cookie("token", "", {maxAge: 1, secure:true, sameSite: "None"});
   console.log('Redirecting to logout');
-  res.redirect("/");
+  return res.status(200).send("logged out");
 };

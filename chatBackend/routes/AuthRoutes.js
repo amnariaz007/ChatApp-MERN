@@ -25,7 +25,7 @@ authRoutes.post('/profilePicture',isLoggedIn,
 
 authRoutes.delete('/deleteProfile',isLoggedIn,  deleteProfile );
 
-authRoutes.get("/logout", logout);
+authRoutes.post("/logout", logout);
 
 
 

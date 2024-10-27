@@ -12,7 +12,7 @@ import { useAppStore } from "@/store";
 
 const Auth = () => {
   const navigate = useNavigate();
-  const {setuserInfo} = useAppStore();
+  const { userInfo ,setuserInfo} = useAppStore();
   const [email, setemail] = useState("")
   const [password, setpassword] = useState("")
   const [confirm, setconfirm] = useState("")
@@ -53,7 +53,7 @@ const Auth = () => {
       console.log({ response });
       if (response.data.user.id) {
         setuserInfo(response.data.user)
-        if(response.user.profilesetup){
+        if(response.userInfo.profilesetup){
           navigate('/chat')
         } else {
           navigate('/profile')
