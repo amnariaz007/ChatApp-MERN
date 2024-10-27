@@ -42,7 +42,7 @@ const ProfileInfo = () => {
                                     className="object-cover w-full h-full bg-black"
                                 />
                             ) : (
-                                <div className={`uppercase h-32 w-32 md:w-48 md:h-48 text-5xl broder-[1px] flex items-center justify-center rounded-full ${getColor(userInfo.color)}`}>
+                                <div className={`uppercase h-12 w-12 flex items-center justify-center rounded-full ${getColor(userInfo.color)}`}>
                                     {userInfo.firstname
                                         ? userInfo.firstname.split("").shift()
                                         : userInfo.email.split("").shift()

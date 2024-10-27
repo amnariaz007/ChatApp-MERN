@@ -10,6 +10,17 @@ export const DELETE_PROFILE = `${AUTH_ROUTES}/deleteProfile`
 export const LOGOUT = `${AUTH_ROUTES}/logout`
 
 
+export const CONTACT_ROUTES = "api/contact"
+export const SEARCH_ROUTE = `${CONTACT_ROUTES}/searchContacts
+`
+
+
+
+
+
+
+
+
 
 
 

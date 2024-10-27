@@ -2,7 +2,7 @@ import { useAppStore } from "@/store"
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoArrowBack } from "react-icons/io5";
-import { Avatar } from "@radix-ui/react-avatar";
+import { Avatar } from "@/components/ui/avatar";
 import { AvatarImage } from "@/components/ui/avatar";
 import { colors, getColor } from "@/lib/utils";
 import { FaTrash, FaPlus } from "react-icons/fa";
@@ -94,7 +94,7 @@ console.log(image, "image")
         const response = await apiClient.post(PROFILE_PICTURE, formData)
         console.log({ response });
         if (response.status === 200 && response.data.image) {
-          setuseinfor({ ...userInfo, image: response.data.image });
+          setuseinfor({ ...userinfo, image: response.data.image });
           toast.success("image uploaded successfully")
         }
       }
@@ -121,13 +121,6 @@ console.log(image, "image")
 
 
 
-
-
-
-
-
-
-
   return (
     <div className=" bg-black h-[100vh] flex items-center justify-center flex-col gap-10 ">
       <div className=" flex flex-col gap-10 w-[80vw] md:w-max ">
@@ -140,23 +133,23 @@ console.log(image, "image")
             onMouseLeave={() => sethovered(false)}
           >
             <Avatar className="h-32 w-32 md:w-48 md:h-48 rounded-full overflow-hidden">
-              {
-                image ? (
-                  <AvatarImage
-                    src={image}
-                    alt="profile"
-                    className="object-cover w-full h-full bg-black"
-                  />
-                ) : (
-                  <div className={`uppercase h-32 w-32 md:w-48 md:h-48 text-5xl broder-[1px] flex items-center justify-center rounded-full ${getColor(selectColor)}`}>
-                    {
-                      firstname ? firstname.split("").shift() : userInfo.email.split("").shift()
-                    }
-                  </div>
-                )
-              }
-
-            </Avatar>
+  {
+    image ? (
+      <AvatarImage
+        src={image}
+        alt="profile"
+        className="object-cover w-full h-full bg-black"
+      />
+    ) : (
+      <div className={`uppercase h-32 w-32 md:w-48 md:h-48 text-5xl border-[1px] flex items-center justify-center rounded-full ${getColor(selectColor)}`}>
+        {
+          // Display the first letter of the firstname if available, otherwise, use the first letter of the email
+          firstname ? firstname.charAt(0) : userInfo.email.charAt(0)
+        }
+      </div>
+    )
+  }
+</Avatar>
             {
               hovered && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black ring-fuchsia-50"

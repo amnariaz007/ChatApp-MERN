@@ -53,7 +53,7 @@ const Auth = () => {
       console.log({ response });
       if (response.data.user.id) {
         setuserInfo(response.data.user)
-        if(response.userInfo.profilesetup){
+        if(response.user.profilesetup){
           navigate('/chat')
         } else {
           navigate('/profile')

@@ -5,7 +5,7 @@ module.exports.searchContacts = async (req, res) => {
  try{
     const {searchTerm} = req.body;
      if(searchTerm === undefined || searchTerm === null){
-        return response.status(400).send("searchTerm is required");
+        return res.status(400).send("searchTerm is required");
      }
 
      const sanitizedSearchTerm = searchTerm.replace(
@@ -23,10 +23,10 @@ module.exports.searchContacts = async (req, res) => {
                 }
             ]
      })
-     return response.status(200).json({contacts})
+     return res.status(200).json({contacts})
  }catch(err){
     console.log(err.message);
-    return response.status(500).send("internal server error")
+    //return response.status(500).send("internal server error")
  }
    
   };

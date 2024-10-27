@@ -6,6 +6,7 @@ const cookieparser = require('cookie-parser');
 const { default: mongoose } = require('mongoose');
 const authRoutes = require('./routes/AuthRoutes')
 const contactRoutes = require('./routes/contactRoutes');
+const setupSocket = require('./socket')
 
 
 //middlewares
@@ -30,6 +31,7 @@ const server = app.listen(port, ()=>{
     console.log(`server is running at http://localhost:${port}`)
 })
 
+setupSocket(server);
 
 mongoose.connect(db)
 .then(()=> console.log("Db connected")).catch(err=> console.log(err));
