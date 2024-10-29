@@ -75,7 +75,7 @@ export const SocketProvider = ({ children }) => {
             socket.current.on("recieveMessage", handleRecieveMessage);
     
             return () => {
-                socket.current.off("recieveMessage", handleRecieveMessage); 
+                socket.current.on("recieveMessage", handleRecieveMessage); 
             };
         }
     }, [userInfo]);

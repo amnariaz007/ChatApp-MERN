@@ -1,4 +1,3 @@
-const { response } = require('express');
 const userModel = require('../models/userModel');
 
 module.exports.searchContacts = async (req, res) => {

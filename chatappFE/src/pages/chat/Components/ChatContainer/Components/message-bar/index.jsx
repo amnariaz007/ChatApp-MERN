@@ -31,6 +31,7 @@ const MessageBar = () => {
           messageType: "text",
           fileUrl: undefined
       });
+      setmessage("")
   } else {
       console.error("Socket not connected or initialized.");
   }

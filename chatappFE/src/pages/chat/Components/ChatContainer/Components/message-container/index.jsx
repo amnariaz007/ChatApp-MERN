@@ -2,11 +2,36 @@ import React from 'react'
 import { useAppStore } from '@/store'
 import moment from 'moment'
 import { useEffect, useRef } from 'react'
-
+import { apiClient } from '@/lib/api-client'
+import {GET_MESSAGE} from '@/utils/constants'
 
 const MessageContainer = () => {
   const scrollRef = useRef();
-  const { selectedChatType, selectedChatData, userInfo, selectedChatMessages } = useAppStore();
+  const { selectedChatType, selectedChatData, userInfo, selectedChatMessages, setSelectedChatMessages } = useAppStore();
+
+  useEffect(() => {
+    const getMessages = async () => {
+      try {
+        const response = await apiClient.post(
+          GET_MESSAGE,
+          { id: selectedChatData._id }
+         
+        );
+        if (response.data.messages) {
+          setSelectedChatMessages(response.data.messages);
+        }
+      } catch (err) {
+        console.log(err.message);
+      }
+    };
+  
+    if (selectedChatData._id && selectedChatType === "contact") {
+      getMessages();
+    }
+  }, [selectedChatData, selectedChatType]);
+  
+  
+
 
 
   useEffect(() => {
@@ -33,27 +58,26 @@ const MessageContainer = () => {
       )
     })
   }
-
   const renderDMMessage = (message) => {
-    <div className={`${message.sender === selectedChatData._id ? "text-left" : "text-right"
-      }`}>
-
-      {message.messageType === "text" && (
-        <div
-          className={`${message.sender !== selectedChatData._id
-
-            ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50 "
-            : "bg-[#2a2b33]/5  text-white/80 border-[#ffffff]/20 "
-            } border inline-block p-4 rounded my-1 max-w-[50%] break-words`}
-        >
-          {message.content}
+    return (
+      <div className={`${message.sender === selectedChatData._id ? "text-left" : "text-right"}`}>
+        {message.messageType === "text" && (
+          <div
+            className={`${message.sender !== selectedChatData._id
+              ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50 "
+              : "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20 "
+              } border inline-block p-4 rounded my-1 max-w-[50%] break-words`}
+          >
+            {message.content}
+          </div>
+        )}
+        <div className='text-xs text-gray-600'>
+          {moment(message.timestamp).format("LT")}
         </div>
-      )}
-      <div className='text-xs text-gray-600'>
-        {moment(message.timestamp).format("LT")}
       </div>
-    </div>
-  }
+    );
+  };
+  
 
 
   return (
