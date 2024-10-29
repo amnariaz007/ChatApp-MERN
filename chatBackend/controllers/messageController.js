@@ -1,5 +1,6 @@
 const { response } = require('express');
 const messageModel = require('../models/messageModel');
+const { default: mongoose } = require('mongoose');
 
 module.exports.getMessages = async (req, res) => {
  try{
@@ -15,11 +16,7 @@ module.exports.getMessages = async (req, res) => {
     }
 
      const messages = await messageModel.find({
-           $or:[
-            // {sender: user1, recipient: user2},
-            // { sender: user2, recipient:user1}
-
-          
+           $or:[      
                   { sender: user1 },
                   { recipient: user1 }
                 ]
@@ -33,3 +30,5 @@ module.exports.getMessages = async (req, res) => {
  }
    
   };
+
+

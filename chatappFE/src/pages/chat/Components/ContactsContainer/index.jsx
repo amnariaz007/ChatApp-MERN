@@ -1,9 +1,31 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import ProfileInfo from './components/profile-info';
 import NewDm from './components/newDm';
+import { apiClient } from '@/lib/api-client';
+import {GET_ALL_CONTACT_MESSAGE} from '@/utils/constants'
 
-const ContactsContainer
- = () => {
+
+const ContactsContainer = () => {
+
+
+  useEffect(() => {
+    const getContacts = async () => {
+      try {
+        const response = await apiClient.get(GET_ALL_CONTACT_MESSAGE,{
+          withCredentials: true
+        });
+        if (response.data.contacts) {
+          console.log("Contacts fetched:", response.data.contacts);
+        }
+      } catch (error) {
+        console.error("Error fetching contacts:", error.message);
+      }
+    };
+  
+    getContacts();
+  }, []);
+  
+
   return (
     <div className='relative md:w-[35vw] lg:w-[30vw] xl:w-[20vw] bg-[#1b1c24] border-r-2 border-[#2f303b] w-full '>
       <div className='p-3'>
