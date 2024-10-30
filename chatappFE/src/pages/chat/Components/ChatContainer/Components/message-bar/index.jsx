@@ -10,6 +10,7 @@ import { useAppStore } from '@/store'
 
 const MessageBar = () => {
 
+  const fileInputRef = useRef();
   const emojiRef = useRef();
   const socket = useSocket();
   //console.log("Socket in MessageBar:", socket);
