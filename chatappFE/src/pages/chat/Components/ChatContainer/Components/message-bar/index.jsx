@@ -16,7 +16,7 @@ const MessageBar = () => {
   const emojiRef = useRef();
   const socket = useSocket();
   //console.log("Socket in MessageBar:", socket);
-  const { selectedChatType, selectedChatData, userInfo } = useAppStore();
+  const { selectedChatType, selectedChatData, userInfo, setIsUploading, setUploadingProgress } = useAppStore();
   const [message, setmessage] = useState("");
   const [emojiPickerOpenClose, setemojiPickerOpenClose] = useState(false);
 
@@ -52,6 +52,7 @@ const MessageBar = () => {
     if (file) {
       const formData = new FormData();
       formData.append('file', file);
+     
       try {
         const response = await apiClient.post(FILE_UPLOAD, formData);
         console.log("Uploaded file path:", response.data.filePath); // Check the file URL here

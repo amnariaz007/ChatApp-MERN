@@ -13,7 +13,7 @@ const MessageContainer = () => {
 
 
   const scrollRef = useRef();
-  const { selectedChatType, selectedChatData, userInfo, selectedChatMessages, setSelectedChatMessages } = useAppStore();
+  const { selectedChatType, selectedChatData, userInfo, selectedChatMessages, setSelectedChatMessages, setDownloadingProgress, setIsDownloading } = useAppStore();
 
   const [showimage, setshowimage] = useState(false);
   const [imageurl, setimageurl] = useState(null)
@@ -125,8 +125,9 @@ const MessageContainer = () => {
   };
   
   const DownloadFile = async(url) =>{
+  
     const response = await apiClient.get(`${HOST}${url}`, {
-      responseType: "blob"
+      responseType: "blob",
     });
 
     const urlBlob = window.URL.createObjectURL(new Blob([response.data]));
@@ -136,7 +137,8 @@ const MessageContainer = () => {
     document.body.appendChild(link);
     link.click();
     link.remove();
-    window.URL.revokeObjectURL(urlBlob)
+    window.URL.revokeObjectURL(urlBlob);
+   
   }
 
 
