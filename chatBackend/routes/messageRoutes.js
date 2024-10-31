@@ -4,12 +4,12 @@ const {getMessages, fileUpload } = require('../controllers/messageController');
 const isLoggedIn = require("../middlewares/isLoggedin");
 
 const multer = require('multer');
-const upload = multer({dest:"uploads/files/"})
+const upload = multer({dest:"uploads/files"})
 
 const messageRoutes = router
 
 messageRoutes.post('/getMessages', isLoggedIn, getMessages );
-messageRoutes.post('/fileUpload',   upload.single("file")   , isLoggedIn, fileUpload );
+messageRoutes.post('/fileUpload', isLoggedIn,  upload.single("file")  , fileUpload );
 
 
 

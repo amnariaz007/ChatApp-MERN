@@ -16,18 +16,8 @@ const messageSchema = ({
         enum: ["text", "file"],
         required : true
     },
-    content: {
-        type: String,
-        required: function (){
-            return this.messageType === "text";
-        },
-    },
-    fileUrl : {
-        type: String ,
-        required: function () {
-            return this.messageType === "file"
-        },
-    },
+    content: { type: String, required: function() { return this.messageType !== 'file'; } },
+    fileUrl: { type: String, required: function() { return this.messageType === 'file'; } },
     timestamp:{
         type: Date,
         default : Date.now

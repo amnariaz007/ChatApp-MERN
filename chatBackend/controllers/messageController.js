@@ -48,7 +48,7 @@ module.exports.fileUpload = async (req, res) => {
         renameSync(req.file.path, fileName);
 
 
-        return res.status(200).json({ filepath: fileName })
+        return res.status(200).json({  filePath: fileName  })
     } catch (err) {
         console.log(err.message);
         return response.status(500).send("internal server error")

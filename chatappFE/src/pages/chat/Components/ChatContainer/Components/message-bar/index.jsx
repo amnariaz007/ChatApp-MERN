@@ -5,6 +5,8 @@ import { IoSend } from 'react-icons/io5'
 import EmojiPicker from 'emoji-picker-react'
 import { useSocket } from '@/context/SocketContext'
 import { useAppStore } from '@/store'
+import { apiClient } from '@/lib/api-client'
+import {FILE_UPLOAD} from '@/utils/constants'
 
 
 
@@ -30,7 +32,6 @@ const MessageBar = () => {
           content: message,
           recipient: selectedChatData._id,
           messageType: "text",
-          fileUrl: undefined
       });
       setmessage("")
   } else {
@@ -38,6 +39,36 @@ const MessageBar = () => {
   }
   
   };
+
+  const hadleFileInputclick = () => {
+    if(fileInputRef.current){
+      fileInputRef.current.click();
+    }
+
+  }
+
+  const handleAttachementChange = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      try {
+        const response = await apiClient.post(FILE_UPLOAD, formData);
+        console.log("Uploaded file path:", response.data.filePath); // Check the file URL here
+        if (response.status === 200 && response.data.filePath) {
+          socket.emit("sendMessage", {
+            sender: userInfo.id,
+            recipient: selectedChatData._id,
+            messageType: "file",
+            fileUrl: response.data.filePath,  // Ensure fileUrl is present
+          });
+        }
+      } catch (err) {
+        console.log(err.message);
+      }
+    }
+  };
+  
   
 
 
@@ -65,9 +96,16 @@ const MessageBar = () => {
           value={message}
           onChange={(e) => setmessage(e.target.value)}
         />
-        <button className='text-neutral-500 focus:border-none focus:outline-none focus:text-white duration-300 transition-all' >
+        <button onClick={hadleFileInputclick} className='text-neutral-500 focus:border-none focus:outline-none focus:text-white duration-300 transition-all' >
           <GrAttachment className='text-2xl' />
         </button>
+        <input type="file"
+              ref={fileInputRef}
+              className="hidden"
+              onChange={handleAttachementChange}
+              
+             
+            />
         <div className='relative'>
           <button className='text-neutral-500 focus:border-none focus:outline-none focus:text-white duration-300 transition-all'
             onClick={() => setemojiPickerOpenClose(true)}
