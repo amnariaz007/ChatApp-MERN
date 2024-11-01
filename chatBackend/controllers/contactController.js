@@ -94,4 +94,26 @@ module.exports.searchContacts = async (req, res) => {
    }
 };
 
+
+module.exports.getAllContacts = async (req, res) => {
+  try{
+    
+    const user = await userModel.find({
+      _id: {$ne: req.userId}
+    }, "firstname lastname _id email"
+  );
+
+  const contacts = user.map((user)=>({
+    label: user.firstname ? `${user.firstname} ${user.lastname}` : user.email,
+    value : user._id
+  }))
+      
+      return res.status(200).json({contacts});
+  }catch(err){
+     console.log(err.message);
+     //return response.status(500).send("internal server error")
+  }
+    
+   };
+
  

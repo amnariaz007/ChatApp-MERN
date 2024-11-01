@@ -5,6 +5,7 @@ import { apiClient } from '@/lib/api-client';
 import {GET_ALL_CONTACT_MESSAGE} from '@/utils/constants'
 import { useAppStore } from '@/store';
 import {ContactList} from '@/components/contactList'
+import CreateChannel from './components/create-channel';
 
 
 const ContactsContainer = () => {
@@ -47,6 +48,7 @@ const ContactsContainer = () => {
       <div className='my-5'>
         <div className='flex items-center justify-between pr-10'>
             <Title text="Channels"/>
+            <CreateChannel/>
             </div> 
       </div>
 

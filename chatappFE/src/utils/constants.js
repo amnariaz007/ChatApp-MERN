@@ -13,6 +13,7 @@ export const LOGOUT = `${AUTH_ROUTES}/logout`
 export const CONTACT_ROUTES = "api/contact"
 export const SEARCH_ROUTE = `${CONTACT_ROUTES}/searchContacts`
 export const GET_ALL_CONTACT_MESSAGE = `${CONTACT_ROUTES}/getAllContactMessages`
+export const GET_ALL_CONTACT = `${CONTACT_ROUTES}/getAllContacts`
 
 
 export const MESSAGE_ROUTES = "api/message"
