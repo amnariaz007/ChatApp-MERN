@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { FaPlus } from 'react-icons/fa';
-import { animationDefaultOptions } from '@/lib/utils';
-import Lottie from 'react-lottie';
 import { apiClient } from '@/lib/api-client';
-import { GET_ALL_CONTACT, HOST } from '@/utils/constants'
-import { getColor } from '@/lib/utils';
-import { Avatar } from "@/components/ui/avatar";
-import { AvatarImage } from "@/components/ui/avatar";
+import { GET_ALL_CONTACT, HOST, CREATE_CHANNEL  } from '@/utils/constants'
+
 
 
 import {
@@ -25,8 +21,7 @@ import MultipleSelector from '@/components/ui/multipleselect';
 
 const CreateChannel = () => {
 
-    const {setSelectedChatType, setSelectedChatData} = useAppStore()
-
+    const {setSelectedChatType, setSelectedChatData, addChannel} = useAppStore()
     const [newchannelmodel, setnewchannelmodel] = useState(false);
     const [searchedContacts, setsearchedContacts] = useState([]);
     const [ allcontacts, setallcontacts] = useState([]);
@@ -43,8 +38,30 @@ const CreateChannel = () => {
     }, [])
     
 
- const getAllContacts = async ( ) =>{
+ const createNewChannel = async () =>{
+    try{
 
+        if(channelname.length >0 && selectedcontacts.length >0){
+
+            const response = await apiClient.post(CREATE_CHANNEL, {
+                name: channelname,
+                members: selectedcontacts.map((contact)=> contact.value)
+            },
+        )
+        console.log({
+            name: channelname,
+            members: selectedcontacts.map((contact) => contact.value),
+          });
+            if( response.status === 200){
+                setchannelname("");
+                setselectedcontacts([]);
+                setnewchannelmodel(false);
+                addChannel(response.data.channel)
+            }
+        }
+    }catch(err){
+        console.log(err.message)
+    }
  }
 
 
@@ -95,7 +112,7 @@ const CreateChannel = () => {
                     </div>
                     <div>
                         <button className='w-full bg-purple-500 hover:bg-purple-300 transition-all duration-300'
-                        onClick={getAllContacts}
+                        onClick={createNewChannel}
                         >
                         Create Channel
                         </button>

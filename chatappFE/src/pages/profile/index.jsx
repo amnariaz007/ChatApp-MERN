@@ -23,7 +23,7 @@ const Profile = () => {
   const [hovered, sethovered] = useState(false)
   const [selectColor, setselectColor] = useState(0)
 
-  const { userInfo } = useAppStore();
+  const { userInfo, setuserInfo } = useAppStore();
 
   useEffect(() => {
     if (userInfo) {
@@ -32,12 +32,12 @@ const Profile = () => {
         setselectColor(userInfo.color || 0);
     }
     if (userInfo && userInfo.image) {
-        const imagePath = `${HOST}${userInfo.image}`;
+        const imagePath = `${HOST}/${userInfo.image}`;
         setimage(imagePath);
     }
 }, [userInfo]);
 
-console.log(image, "image")
+//console.log(image, "image")
 
 
 
@@ -56,18 +56,17 @@ console.log(image, "image")
   const saveChanges = async () => {
     if (validateProfile()) {
       try {
-        const response = await apiClient.post(UPDATE_PROFILE, { firstname, lastname, color: selectColor })
-        console.log({ response });
+        const response = await apiClient.post(UPDATE_PROFILE, { firstname, lastname, color: selectColor });
         if (response.status === 200 && response.data) {
-          setuseinfor({ ...response.data });
-          navigate("/chat");
+          userInfo({...response.data}); // update global user info
+          navigate("/chat"); // redirect to chat
         }
-      }
-      catch (err) {
-        console.log(err.message);
+      } catch (err) {
+        console.log("Profile update error:", err.message);
       }
     }
-  }
+  };
+  
 
   const backnavigate = () => {
     if (userInfo.profilesetup) {

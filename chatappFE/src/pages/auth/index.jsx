@@ -51,7 +51,7 @@ const Auth = () => {
     if (validatelogin()) {
       const response = await apiClient.post(LOGIN_ROUTE, { email, password })
       console.log({ response });
-      if (response.data.user.id) {
+      if (response.data.user) {
         setuserInfo(response.data.user)
         if(response.user.profilesetup){
           navigate('/chat')

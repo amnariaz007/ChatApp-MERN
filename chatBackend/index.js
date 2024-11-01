@@ -7,7 +7,8 @@ const { default: mongoose } = require('mongoose');
 const authRoutes = require('./routes/AuthRoutes')
 const contactRoutes = require('./routes/contactRoutes');
 const messageRoutes = require('./routes/messageRoutes')
-const setupSocket = require('./socket')
+const setupSocket = require('./socket');
+const channelRoutes = require('./routes/channelRoutes');
 
 
 //middlewares
@@ -29,6 +30,7 @@ const db = process.env.MOONGODB_URI;
 app.use('/api/auth', authRoutes);
 app.use('/api/contact/', contactRoutes)
 app.use('/api/message/', messageRoutes)
+app.use('/api/channel/', channelRoutes)
 
 
 
