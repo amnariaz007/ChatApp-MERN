@@ -22,6 +22,9 @@ export const FILE_UPLOAD = `${MESSAGE_ROUTES}/fileUpload`
 
 export const CHANNEL_ROUTES = "api/channel"
 export const CREATE_CHANNEL = `${CHANNEL_ROUTES}/createChannel`
+export const GET_CHANNEL = `${CHANNEL_ROUTES}/GetUserChannel`
+
+
 
 
 

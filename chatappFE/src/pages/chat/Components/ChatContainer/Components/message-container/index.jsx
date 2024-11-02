@@ -38,6 +38,8 @@ const MessageContainer = () => {
       getMessages();
     }
   }, [selectedChatData, selectedChatType]);
+
+  
   
 
   useEffect(() => {
@@ -50,6 +52,7 @@ const MessageContainer = () => {
     const imageRegex= /\.(jpg|jpeg|png|bmp|gif|tif|tiff|webp|svg|ico|heic|heif)$/i;
     return imageRegex.test(filePath)
   }
+
 
   const renderMessage = () => {
     let lastDate = null;
@@ -69,6 +72,7 @@ const MessageContainer = () => {
       )
     })
   }
+  
   const renderDMMessage = (message) => {
     return (
       <div className={`${message.sender === selectedChatData._id ? "text-left" : "text-right"}`}>

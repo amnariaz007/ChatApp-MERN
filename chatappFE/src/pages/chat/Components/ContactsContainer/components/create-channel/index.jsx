@@ -35,6 +35,7 @@ const CreateChannel = () => {
         setallcontacts((await response).data.contacts);
      }
      getData();
+     
     }, [])
     
 
