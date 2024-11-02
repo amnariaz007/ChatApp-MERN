@@ -27,12 +27,22 @@ const MessageBar = () => {
 
   const HandlesendMessage = async () => {
     if (socket?.connected) {
-      socket.emit("sendMessage", {
+      if(selectedChatType === "contact"){
+
+        socket.emit("sendMessage", {
+            sender: userInfo.id,
+            content: message,
+            recipient: selectedChatData._id,
+            messageType: "text",
+        });
+      }else if ( selectedChatType === "channel"){
+        socket.emit("send-channel-Message", {
           sender: userInfo.id,
           content: message,
-          recipient: selectedChatData._id,
           messageType: "text",
+          channelId: selectedChatData._id
       });
+      }
       setmessage("")
   } else {
       console.error("Socket not connected or initialized.");
@@ -57,12 +67,24 @@ const MessageBar = () => {
         const response = await apiClient.post(FILE_UPLOAD, formData);
         console.log("Uploaded file path:", response.data.filePath); // Check the file URL here
         if (response.status === 200 && response.data.filePath) {
-          socket.emit("sendMessage", {
-            sender: userInfo.id,
-            recipient: selectedChatData._id,
-            messageType: "file",
-            fileUrl: response.data.filePath,  // Ensure fileUrl is present
+          if(selectedChatData === "contact"){
+
+            socket.emit("sendMessage", {
+              sender: userInfo.id,
+              recipient: selectedChatData._id,
+              messageType: "file",
+              fileUrl: response.data.filePath,  // Ensure fileUrl is present
+            });
+          } else if ( selectedChatType === "channel"){
+            socket.emit("send-channel-Message", {
+              sender: userInfo.id,
+              content: message,
+              messageType: "file",
+              fileUrl: response.data.filePath, 
+              channelId: selectedChatData._id,
           });
+          }
+          
         }
       } catch (err) {
         console.log(err.message);
