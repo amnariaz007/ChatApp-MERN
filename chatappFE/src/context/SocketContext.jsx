@@ -1,53 +1,18 @@
+import React, { createContext,useEffect,useRef,   useContext } from 'react';
+import { io } from "socket.io-client";
 import { useAppStore } from "@/store";
 import { HOST } from "@/utils/constants";
-import { createContext, useEffect, useContext, useRef } from "react";
-import { io } from 'socket.io-client'
 
-const SocketContext = createContext(null);
+// Create and export the context
+export const SocketContext = createContext(null);
 
-export const useSocket = () => {
-    return useContext(SocketContext);
-}
+// Custom hook to access socket context
+export const useSocket = () => useContext(SocketContext);
 
+// Main provider component
 export const SocketProvider = ({ children }) => {
-    const socket = useRef();
+    const socket = useRef(null);
     const { userInfo } = useAppStore();
-
-    // useEffect(() => {
-    //     if (userInfo) {
-    //         socket.current = io(HOST, {
-    //             withCredetials: true,
-    //             query: { userId: userInfo.id }
-    //         });
-    //         socket.current.on("connect", () => {
-    //             console.log("conected to socket server");
-    //         });
-
-
-
-
-    //         const handleRecieveMessage = (message) => {
-    //             const { selectedChatData, selectedChatType, addMessage } = useAppStore.getState();
-
-    //             if (
-    //                 selectedChatType !== undefined &&
-    //                 (selectedChatData._id === message.sender._id ||
-    //                     selectedChatData._id === message.recipient._id
-    //                 )
-    //             ) {
-    //                 console.log("message rcv", message)
-    //                 addMessage(message)
-    //             }
-    //         }
-
-    //         socket.current.on("recieveMessage", handleRecieveMessage);
-           
-
-    //         return () => {
-    //             socket.current.disconnect();
-    //         }
-    //     }
-    // }, [userInfo])
 
     useEffect(() => {
         if (userInfo) {
@@ -55,13 +20,13 @@ export const SocketProvider = ({ children }) => {
                 withCredentials: true,
                 query: { userId: userInfo.id }
             });
-            
+
             socket.current.on("connect", () => {
                 console.log("Connected to socket server");
             });
-    
+
             const handleRecieveMessage = (message) => {
-                console.log("Message received by client:", message); 
+                console.log("Message received by client:", message);
                 const { selectedChatData, selectedChatType, addMessage } = useAppStore.getState();
                 if (
                     selectedChatType !== undefined &&
@@ -71,23 +36,32 @@ export const SocketProvider = ({ children }) => {
                     addMessage(message);
                 }
             };
-    
-            socket.current.on("recieveMessage", handleRecieveMessage);
-    
-            return () => {
-                socket.current.on("recieveMessage", handleRecieveMessage); 
+
+            const handleRecieveChannelMessage = (message) => {
+                const { selectedChatData, selectedChatType, addMessage } = useAppStore.getState();
+                if (
+                    selectedChatType !== undefined &&
+                    selectedChatData._id === message.channelId
+                ) {
+                    addMessage(message);
+                }
             };
+
+            socket.current.on("recieveMessage", handleRecieveMessage);
+            socket.current.on("recieve-channel-Message", handleRecieveChannelMessage);
+
+            return () => {
+                socket.current.off("receiveMessage", handleRecieveMessage);
+                socket.current.off("receive-channel-message", handleRecieveChannelMessage);
+                socket.current.disconnect();
+            };
+            
         }
     }, [userInfo]);
-    
-
-
 
     return (
         <SocketContext.Provider value={socket.current}>
-        {children}
-    </SocketContext.Provider>
-    
-    )
-
-}
+            {children}
+        </SocketContext.Provider>
+    );
+};

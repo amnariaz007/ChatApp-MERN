@@ -18,25 +18,29 @@ export const createChatSlice = (set, get) =>({
     selectedChatData : undefined,
     selectedChatMessages : [],
     }),
-    addMessage : (message)=>{
-        const selectedChatMessages = get().selectedChatMessages;
-        const selectedChatType = get().selectedChatType;
-
-        set({
-            selectedChatMessages:[
-                ...selectedChatMessages,
-                {
-                    ...message,
-                    recipient:
-                    selectedChatType === "channel"
-                    ? message.recipient
-                    : message.recipient._id,
-                    sender:
-                    selectedChatType === "channel"
-                    ? message.recipient
-                    : message.recipient._id
-                }
-            ]
-        })
+    addMessage: (message) => {
+        const { selectedChatMessages, selectedChatType, selectedChatData } = get();
+        
+        console.log("Adding message to Zustand state:", message);  // Debugging log
+        console.log("Current chat data:", selectedChatData);  // Debugging log
+    
+        if (
+            (selectedChatType === "channel" && message.channelId === selectedChatData._id) ||
+            (selectedChatType === "contact" && (message.recipient === selectedChatData._id || message.sender === selectedChatData._id))
+        ) {
+            set({
+                selectedChatMessages: [
+                    ...selectedChatMessages,
+                    {
+                        ...message,
+                        recipient: selectedChatType === "channel" ? message.channelId : message.recipient._id || message.recipient,
+                        sender: message.sender._id || message.sender,
+                    }
+                ]
+            });
+        }
     }
+    
+    
+    
 })

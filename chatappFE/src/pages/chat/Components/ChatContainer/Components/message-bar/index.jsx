@@ -16,7 +16,7 @@ const MessageBar = () => {
   const emojiRef = useRef();
   const socket = useSocket();
   //console.log("Socket in MessageBar:", socket);
-  const { selectedChatType, selectedChatData, userInfo, setIsUploading, setUploadingProgress } = useAppStore();
+  const { selectedChatType, selectedChatData, userInfo } = useAppStore();
   const [message, setmessage] = useState("");
   const [emojiPickerOpenClose, setemojiPickerOpenClose] = useState(false);
 

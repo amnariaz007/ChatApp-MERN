@@ -23,7 +23,9 @@ const MessageContainer = () => {
       try {
         const response = await apiClient.post(
           GET_MESSAGE,
-          { id: selectedChatData._id }
+          { id: selectedChatData._id ,
+            chatType: selectedChatType
+          }
          
         );
         if (response.data.messages) {
@@ -37,6 +39,12 @@ const MessageContainer = () => {
     if (selectedChatData._id && selectedChatType === "contact") {
       getMessages();
     }
+
+    if (selectedChatData._id && selectedChatType === "channel") {
+      getMessages();
+    }
+
+
   }, [selectedChatData, selectedChatType]);
 
   
@@ -46,7 +54,8 @@ const MessageContainer = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [selectedChatMessages]);
+  }, [selectedChatMessages, selectedChatType]);
+  
 
   const checkIfImage = (filePath) =>{
     const imageRegex= /\.(jpg|jpeg|png|bmp|gif|tif|tiff|webp|svg|ico|heic|heif)$/i;
@@ -56,22 +65,28 @@ const MessageContainer = () => {
 
   const renderMessage = () => {
     let lastDate = null;
+    console.log("Rendering messages for:", selectedChatType, selectedChatMessages); // Debugging log
+
     return selectedChatMessages.map((message) => {
-      const messageDate = moment(message.timestamp).format("YYYY-MM-DD");
-      const showDate = messageDate !== lastDate;
-      lastDate = messageDate;
-      return (
-        <div key={message._id}>
-          {showDate && (
-            <div className='text-center text-gray-500 my-2'>
-              {moment(message.timestamp).format("LL")}
+        const messageDate = moment(message.timestamp).format("YYYY-MM-DD");
+        const showDate = messageDate !== lastDate;
+        lastDate = messageDate;
+
+        return (
+            <div key={message._id}>
+                {showDate && (
+                    <div className='text-center text-gray-500 my-2'>
+                        {moment(message.timestamp).format("LL")}
+                    </div>
+                )}
+                {selectedChatType === "contact" && renderDMMessage(message)}
+                {selectedChatType === "channel" && renderChannelMessages(message)}
             </div>
-          )}
-          {selectedChatType === "contact" && renderDMMessage(message)}
-        </div>
-      )
-    })
-  }
+        );
+    });
+};
+
+
   
   const renderDMMessage = (message) => {
     return (
@@ -144,6 +159,27 @@ const MessageContainer = () => {
     window.URL.revokeObjectURL(urlBlob);
    
   }
+
+  
+  const renderChannelMessages = (message) => {
+    const isSender = message.sender === userInfo.id;
+
+    return (
+        <div className={`mt-5 ${isSender ? "text-right" : "text-left"}`}>
+            {message.messageType === "text" && (
+                <div
+                    className={`${
+                        isSender
+                            ? "bg-[#2a2b33]/5 text-white/80 border-[#ffffff]/20"
+                            : "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50"
+                    } border inline-block p-4 rounded my-1 max-w-[50%] break-words`}
+                >
+                    {message.content}
+                </div>
+            )}
+        </div>
+    );
+};
 
 
   return (

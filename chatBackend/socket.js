@@ -1,5 +1,6 @@
 const { Server: SocketIOServer } = require("socket.io");
 const messageModel = require('./models/messageModel');
+const channelModel = require('./models/ChannelModel')
 
 const setupSocket = (server) => {
     const io = new SocketIOServer(server, {
@@ -46,6 +47,48 @@ const setupSocket = (server) => {
 
     }
 
+
+    const sendChannelMessage = async (message) => {
+        const { channelId, sender, content, messageType, fileUrl, timestamp } = message;
+    
+        const createdMessage = await messageModel.create({
+            sender,
+            recipient: null, // No recipient for channel messages
+            content,
+            messageType,
+            timestamp,
+            fileUrl
+        });
+    
+        const messageData = await messageModel.findById(createdMessage._id)
+            .populate("sender", "id email firstname lastname image color")
+            .exec();
+    
+        await channelModel.findByIdAndUpdate(channelId, {
+            $push: { messages: createdMessage._id }
+        });
+    
+        const channel = await channelModel.findById(channelId).populate("members");
+    
+        const finalData = { ...messageData._doc, channelId: channel._id };
+    
+        if (channel && channel.members) {
+            channel.members.forEach((member) => {
+                const memberSocketId = userSocketMap.get(member._id.toString());
+                if (memberSocketId) {
+                    io.to(memberSocketId).emit("receive-channel-message", finalData); // Correct event name
+                }
+            });
+    
+            // Emit to the channel admin
+            const adminSocketId = userSocketMap.get(channel.admin._id.toString());
+            if (adminSocketId) { // Correct variable here
+                io.to(adminSocketId).emit("receive-channel-message", finalData); // Correct event name
+            }
+        }
+    };
+    
+
     io.on("connection", (socket) => {
         const userId = socket.handshake.query.userId;
 
@@ -60,6 +103,12 @@ const setupSocket = (server) => {
             console.log("Message received on server:", message); // <-- Add this line
             sendMessage(message);
         });
+        
+
+        socket.on("receive-channel-message", (message) => {
+            console.log("Message received on server:", message); // <-- Add this line
+            sendChannelMessage(message);
+        });   
         
 
         socket.on("disconnect", () => disconnect(socket));
