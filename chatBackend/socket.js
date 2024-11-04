@@ -37,10 +37,10 @@ const setupSocket = (server) => {
             console.log("Message received on server:", messageData); 
 
         if (recipientSocketId) {
-            io.to(recipientSocketId).emit("recieveMessage", messageData)
+            io.to(recipientSocketId).emit("receiveMessage", messageData)
         }
         if (senderSocketId) {
-            io.to(senderSocketId).emit("recieveMessage", messageData)
+            io.to(senderSocketId).emit("receiveMessage", messageData)
 
         }
 
@@ -105,12 +105,11 @@ const setupSocket = (server) => {
         });
         
 
-        socket.on("receive-channel-message", (message) => {
+        socket.on("send-channel-Message", (message) => {
             console.log("Message received on server:", message); // <-- Add this line
             sendChannelMessage(message);
         });   
         
-
         socket.on("disconnect", () => disconnect(socket));
 
     })

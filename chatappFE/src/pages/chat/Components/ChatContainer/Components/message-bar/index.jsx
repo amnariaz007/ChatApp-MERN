@@ -25,30 +25,38 @@ const MessageBar = () => {
 
   }
 
-  const HandlesendMessage = async () => {
-    if (socket?.connected) {
-      if(selectedChatType === "contact"){
-
-        socket.emit("sendMessage", {
-            sender: userInfo.id,
-            content: message,
-            recipient: selectedChatData._id,
-            messageType: "text",
-        });
-      }else if ( selectedChatType === "channel"){
-        socket.emit("send-channel-Message", {
-          sender: userInfo.id,
-          content: message,
-          messageType: "text",
-          channelId: selectedChatData._id
-      });
-      }
-      setmessage("")
-  } else {
-      console.error("Socket not connected or initialized.");
-  }
   
+
+  const HandlesendMessage = async () => {
+    console.log("Socket:", socket); // Check if socket is defined
+    if (socket && socket.connected) {
+        console.log("Sending message:", message);
+        if (selectedChatType === "contact") {
+            const payload = {
+                sender: userInfo.id,
+                content: message,
+                recipient: selectedChatData._id,
+                messageType: "text",
+            };
+            console.log("Payload:", payload);
+            socket.emit("sendMessage", payload);
+        } else if (selectedChatType === "channel") {
+            const payload = {
+                sender: userInfo.id,
+                content: message,
+                messageType: "text",
+                channelId: selectedChatData._id
+            };
+            console.log("Payload:", payload);
+            socket.emit("send-channel-Message", payload);
+        }
+        setmessage("");
+    } else {
+        console.error("Socket not connected or initialized.");
+    }
   };
+  
+
 
   const hadleFileInputclick = () => {
     if(fileInputRef.current){
