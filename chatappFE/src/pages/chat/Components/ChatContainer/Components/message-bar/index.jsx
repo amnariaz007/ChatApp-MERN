@@ -7,6 +7,7 @@ import { useSocket } from '@/context/SocketContext'
 import { useAppStore } from '@/store'
 import { apiClient } from '@/lib/api-client'
 import {FILE_UPLOAD} from '@/utils/constants'
+import { MdKeyboardVoice } from "react-icons/md";
 
 
 
@@ -100,7 +101,9 @@ const MessageBar = () => {
     }
   };
   
-  
+  const hadleVoiceNotek = async () =>{
+    
+  }
 
 
   useEffect(() => {
@@ -127,15 +130,16 @@ const MessageBar = () => {
           value={message}
           onChange={(e) => setmessage(e.target.value)}
         />
+        <button onClick={hadleVoiceNotek} className='text-neutral-500 focus:border-none focus:outline-none focus:text-white duration-300 transition-all'>
+          <MdKeyboardVoice className='text-2xl'/>
+        </button>
         <button onClick={hadleFileInputclick} className='text-neutral-500 focus:border-none focus:outline-none focus:text-white duration-300 transition-all' >
           <GrAttachment className='text-2xl' />
         </button>
         <input type="file"
               ref={fileInputRef}
               className="hidden"
-              onChange={handleAttachementChange}
-              
-             
+              onChange={handleAttachementChange} 
             />
         <div className='relative'>
           <button className='text-neutral-500 focus:border-none focus:outline-none focus:text-white duration-300 transition-all'

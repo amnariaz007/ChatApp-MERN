@@ -3,19 +3,16 @@ import { io } from "socket.io-client";
 import { useAppStore } from "@/store";
 import { HOST } from "@/utils/constants";
 
-// Create and export the context
 export const SocketContext = createContext(null);
 
-// Custom hook to access socket context
 export const useSocket = () => useContext(SocketContext);
 
-// Main provider component
 export const SocketProvider = ({ children }) => {
     const socket = useRef(null);
-    const { userInfo } = useAppStore();
+    const { userInfo, selectedChatData, selectedChatType, addMessage } = useAppStore();
 
     useEffect(() => {
-        if (userInfo && !socket.current) {  // Only create socket if it doesn't exist yet
+        if (userInfo && !socket.current) {
             socket.current = io(HOST, {
                 withCredentials: true,
                 query: { userId: userInfo.id }
@@ -25,36 +22,27 @@ export const SocketProvider = ({ children }) => {
                 console.log("Connected to socket server");
             });
 
-            const handleRecieveMessage = (message) => {
-                console.log("Message received by client:", message);
-                const { selectedChatData, selectedChatType, addMessage } = useAppStore.getState();
+            // Direct message handler
+            const handleReceiveMessage = (message) => {
+                console.log("Direct message received:", message);
                 if (
-                    selectedChatType !== undefined &&
+                    selectedChatType === "contact" &&
                     (selectedChatData._id === message.sender._id || selectedChatData._id === message.recipient._id)
                 ) {
                     addMessage(message);
                 }
             };
 
-            const handleRecieveChannelMessage = (message) => {
-                const { selectedChatData, selectedChatType, addMessage } = useAppStore.getState();
-                if (
-                    selectedChatType !== undefined &&
-                    selectedChatData._id === message.channelId
-                ) {
+            // Channel message handler
+            const handleReceiveChannelMessage = (message) => {
+                console.log("Channel message received:", message);
+                if (selectedChatType === "channel" && selectedChatData._id === message.channelId) {
                     addMessage(message);
                 }
             };
 
-            socket.current.on("receiveMessage", (message) => {
-                console.log("Received direct message:", message);
-                handleRecieveMessage(message);
-            });
-            
-            socket.current.on("receive-channel-message", (message) => {
-                console.log("Received channel message:", message);
-                handleRecieveChannelMessage(message);
-            });
+            socket.current.on("receiveMessage", handleReceiveMessage);
+            socket.current.on("receive-channel-message", handleReceiveChannelMessage);
 
             return () => {
                 if (socket.current) {
@@ -63,12 +51,11 @@ export const SocketProvider = ({ children }) => {
                 }
             };
         }
-    }, [userInfo]);
+    }, [userInfo, selectedChatData, selectedChatType, addMessage]);
 
     return (
         <SocketContext.Provider value={socket.current || null}>
-        {children}
-    </SocketContext.Provider>
-    
+            {children}
+        </SocketContext.Provider>
     );
 };
