@@ -8,6 +8,7 @@ import { useAppStore } from '@/store'
 import { apiClient } from '@/lib/api-client'
 import {FILE_UPLOAD} from '@/utils/constants'
 import { MdKeyboardVoice } from "react-icons/md";
+import { toast } from 'sonner'
 
 
 
@@ -27,36 +28,50 @@ const MessageBar = () => {
   }
 
   
+ 
 
-  const HandlesendMessage = async () => {
-    console.log("Socket:", socket); // Check if socket is defined
-    if (socket && socket.connected) {
-        console.log("Sending message:", message);
-        if (selectedChatType === "contact") {
-            const payload = {
-                sender: userInfo.id,
-                content: message,
-                recipient: selectedChatData._id,
-                messageType: "text",
-            };
-            console.log("Payload:", payload);
-            socket.emit("sendMessage", payload);
-        } else if (selectedChatType === "channel") {
-            const payload = {
-                sender: userInfo.id,
-                content: message,
-                messageType: "text",
-                channelId: selectedChatData._id
-            };
-            console.log("Payload:", payload);
-            socket.emit("send-channel-Message", payload);
-        }
-        setmessage("");
-    } else {
-        console.error("Socket not connected or initialized.");
-    }
-  };
-  
+
+const HandlesendMessage = async () => {
+  console.log("Socket:", socket);
+
+  if (socket && socket.connected) {
+      console.log("Sending message:", message);
+
+      if (selectedChatType === "contact") {
+          const blockedUsers = userInfo.blockedUsers || []; // Ensure it's an array
+
+          if (blockedUsers.includes(selectedChatData._id)) {
+              toast.error("You have been blocked by this user and cannot send messages.");
+              return;
+          }
+          const payload = {
+              sender: userInfo.id,
+              content: message,
+              recipient: selectedChatData._id,
+              messageType: "text",
+          };
+          console.log("Payload:", payload);
+          socket.emit("sendMessage", payload);
+      } else if (selectedChatType === "channel") {
+          const payload = {
+              sender: userInfo.id,
+              content: message,
+              messageType: "text",
+              channelId: selectedChatData._id,
+          };
+
+          console.log("Payload:", payload);
+          socket.emit("send-channel-Message", payload);
+      }
+
+      setmessage("");
+  } else {
+      console.error("Socket not connected or initialized.");
+  }
+};
+
+
+
 
 
   const hadleFileInputclick = () => {

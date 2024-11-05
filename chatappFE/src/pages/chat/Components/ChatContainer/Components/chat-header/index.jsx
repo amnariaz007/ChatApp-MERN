@@ -5,21 +5,23 @@ import { getColor } from '@/lib/utils'
 import { HOST } from '@/utils/constants'
 import { IoReturnDownBack } from "react-icons/io5";
 import { apiClient } from '@/lib/api-client'
-import { BLOCK_USER } from '@/utils/constants'
+import { BLOCK_USER , UN_BLOCK, USER_INFO} from '@/utils/constants'
 import { toast } from 'sonner'
 
+
 const ChatHeader = () => {
-  const { closeChat, selectedChatData, selectedChatType } = useAppStore();
+  const { closeChat, selectedChatData, selectedChatType,userInfo , setuserInfo } = useAppStore();
 
 
 
   const handleBlockUser = async () => {
     try {
         if (selectedChatType === "contact") {
-            const contactId = selectedChatData._id;
-            const response = await apiClient.post(BLOCK_USER, { contactId });
+            const userId = userInfo.id; // The current user's ID
+            const blockedUserId = selectedChatData._id; // The ID of the user being blocked (selected contact)
+
+            const response = await apiClient.post(BLOCK_USER, { userId, blockedUserId });
             if (response.status === 200) {
-                
                 toast.success("User blocked successfully");
             } else {
                 toast.error("Failed to block the user");
@@ -34,11 +36,26 @@ const ChatHeader = () => {
 };
 
 
+const handleUnBlockUser = async () => {
+  try {
+    const userId = userInfo.id; // The current user's ID
+    const blockedUserId = selectedChatData._id;
+      const response = await apiClient.post(UN_BLOCK, { userId, blockedUserId });
+      if (response.status === 200) {
+          // Refresh userInfo from the server
+          const updatedUserInfo = await apiClient.get(USER_INFO);
+          setuserInfo(updatedUserInfo.data); // Update userInfo in your state
+          
+          toast.success("User unblocked successfully.");
+      } else {
+          toast.error("Failed to unblock the user.");
+      }
+  } catch (error) {
+      console.log("Error unblocking user:", error.message);
+      toast.error("Error unblocking the user.");
+  }
+};
 
-
-  
-
-  const handleUnBlockUser = async () => {}
   const handleDeleteAllChat = async () => {}
 
   return (

@@ -99,6 +99,7 @@ module.exports.userInfo = async (req, res) => {
       lastname: user.lastname,
       image: user.image,
       color: user.color,
+      blockedUsers: user.blockedUsers
 
     });
   } catch (err) {

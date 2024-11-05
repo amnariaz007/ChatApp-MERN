@@ -27,9 +27,30 @@ const setupSocket = (server) => {
     const sendMessage = async (message) => {
         console.log("Processing message:", message); 
 
-      
+        // const sender = await userModel.findById(message.sender);
+        // if (!sender) throw new Error("Sender not found");
+
+        // if (sender.blockedUsers.includes(message.recipient)) {
+        //     console.log("Recipient is blocked by sender. Message not sent.");
+        //     return;
+        // }
+
+        const sender = await userModel.findById(message.sender);
+        const recipient = await userModel.findById(message.recipient);
+    
+        // Check if either user has blocked the other
+        const isBlockedBySender = sender.blockedUsers.includes(message.recipient);
+        const isBlockedByRecipient = recipient.blockedUsers.includes(message.sender);
+    
+        if (isBlockedBySender || isBlockedByRecipient) {
+            console.log("Message blocked due to block status.");
+            return; // Exit early to prevent sending the message
+        }
+
         const senderSocketId = userSocketMap.get(message.sender)
         const recipientSocketId = userSocketMap.get(message.recipient);
+
+
 
         const createMessage = await messageModel.create(message);
 

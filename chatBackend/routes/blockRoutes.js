@@ -6,8 +6,8 @@ const isLoggedIn = require("../middlewares/isLoggedin");
 
 const blockRoutes = router
 
-blockRoutes.post('/Block', isLoggedIn, Block );
-blockRoutes.post('/UnblockUnblock', isLoggedIn, Unblock );
+blockRoutes.post('/block', isLoggedIn, Block );
+blockRoutes.post('/unBlock', isLoggedIn, Unblock );
 
 
 module.exports = blockRoutes;

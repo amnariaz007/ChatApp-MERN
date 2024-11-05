@@ -9,15 +9,10 @@ export const PROFILE_PICTURE = `${AUTH_ROUTES}/profilePicture`
 export const DELETE_PROFILE = `${AUTH_ROUTES}/deleteProfile`
 export const LOGOUT = `${AUTH_ROUTES}/logout`
 
-
 export const CONTACT_ROUTES = "api/contact"
 export const SEARCH_ROUTE = `${CONTACT_ROUTES}/searchContacts`
 export const GET_ALL_CONTACT_MESSAGE = `${CONTACT_ROUTES}/getAllContactMessages`
 export const GET_ALL_CONTACT = `${CONTACT_ROUTES}/getAllContacts`
-export const BLOCK_USER = `${CONTACT_ROUTES}/blockUser`
-
-
-
 
 export const MESSAGE_ROUTES = "api/message"
 export const GET_MESSAGE = `${MESSAGE_ROUTES}/getMessages`
@@ -26,6 +21,14 @@ export const FILE_UPLOAD = `${MESSAGE_ROUTES}/fileUpload`
 export const CHANNEL_ROUTES = "api/channel"
 export const CREATE_CHANNEL = `${CHANNEL_ROUTES}/createChannel`
 export const GET_CHANNEL = `${CHANNEL_ROUTES}/GetUserChannel`
+
+export const BLOCK_ROUTES = "api/block"
+export const BLOCK_USER = `${BLOCK_ROUTES}/block`
+export const UN_BLOCK = `${BLOCK_ROUTES}/unBlock`
+
+
+
+
 
 
 
