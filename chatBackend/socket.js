@@ -1,6 +1,7 @@
 const { Server: SocketIOServer } = require("socket.io");
 const messageModel = require('./models/messageModel');
-const channelModel = require('./models/ChannelModel')
+const channelModel = require('./models/ChannelModel');
+const userModel = require('./models/userModel')
 
 const setupSocket = (server) => {
     const io = new SocketIOServer(server, {
@@ -25,6 +26,8 @@ const setupSocket = (server) => {
 
     const sendMessage = async (message) => {
         console.log("Processing message:", message); 
+
+      
         const senderSocketId = userSocketMap.get(message.sender)
         const recipientSocketId = userSocketMap.get(message.recipient);
 

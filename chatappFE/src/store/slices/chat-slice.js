@@ -18,14 +18,17 @@ export const createChatSlice = (set, get) =>({
     selectedChatData : undefined,
     selectedChatMessages : [],
     }),
+    deleteChat: () => set({
+        selectedChatType : undefined,
+    selectedChatData : undefined,
+    selectedChatMessages : [],
+    }),
     
     addMessage: (message) => {
         const { selectedChatMessages, selectedChatType, selectedChatData } = get();
     
         console.log("Adding message to Zustand state:", message);
         console.log("Current chat data:", selectedChatData);
-    
-        // Normalize sender and recipient IDs
         const messageRecipientId = message.recipient._id || message.recipient;
         const messageSenderId = message.sender._id || message.sender;
         const messageChannelId = message.channelId;
@@ -50,9 +53,9 @@ export const createChatSlice = (set, get) =>({
             console.warn("Message not added: channelId or IDs do not match.");
         }
     }
+
+  
     
-    
-    
-    
+
     
 })

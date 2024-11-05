@@ -4,11 +4,40 @@ import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { getColor } from '@/lib/utils'
 import { HOST } from '@/utils/constants'
 import { IoReturnDownBack } from "react-icons/io5";
+import { apiClient } from '@/lib/api-client'
+import { BLOCK_USER } from '@/utils/constants'
+import { toast } from 'sonner'
 
 const ChatHeader = () => {
   const { closeChat, selectedChatData, selectedChatType } = useAppStore();
 
-  const handleBlockUser = async () => {}
+
+
+  const handleBlockUser = async () => {
+    try {
+        if (selectedChatType === "contact") {
+            const contactId = selectedChatData._id;
+            const response = await apiClient.post(BLOCK_USER, { contactId });
+            if (response.status === 200) {
+                
+                toast.success("User blocked successfully");
+            } else {
+                toast.error("Failed to block the user");
+            }
+        } else {
+            toast.error("You can only block contacts, not channels.");
+        }
+    } catch (error) {
+        console.log("Error blocking user:", error.message);
+        toast.error("Error blocking the user.");
+    }
+};
+
+
+
+
+  
+
   const handleUnBlockUser = async () => {}
   const handleDeleteAllChat = async () => {}
 

@@ -28,7 +28,9 @@ const userSchema = mongoose.Schema({
     color: {
         type: Number,
         required: [false],
-    }
+    },
+    blockedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }]
+    
 
 
 })

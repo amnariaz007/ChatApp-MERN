@@ -9,6 +9,7 @@ const contactRoutes = require('./routes/contactRoutes');
 const messageRoutes = require('./routes/messageRoutes')
 const setupSocket = require('./socket');
 const channelRoutes = require('./routes/channelRoutes');
+const blockRoutes = require('./routes/blockRoutes');
 
 
 //middlewares
@@ -31,6 +32,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/contact/', contactRoutes)
 app.use('/api/message/', messageRoutes)
 app.use('/api/channel/', channelRoutes)
+app.use('/api/block/', blockRoutes)
 
 
 
