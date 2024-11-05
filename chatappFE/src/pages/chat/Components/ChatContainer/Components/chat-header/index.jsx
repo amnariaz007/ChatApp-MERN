@@ -7,52 +7,41 @@ import { IoReturnDownBack } from "react-icons/io5";
 import { apiClient } from '@/lib/api-client'
 import { BLOCK_USER , UN_BLOCK, USER_INFO} from '@/utils/constants'
 import { toast } from 'sonner'
+import { useState, useEffect } from 'react'
 
 
 const ChatHeader = () => {
   const { closeChat, selectedChatData, selectedChatType,userInfo , setuserInfo } = useAppStore();
+  const [isBlocked, setIsBlocked] = useState(false);
 
-
-
-  const handleBlockUser = async () => {
-    try {
-        if (selectedChatType === "contact") {
-            const userId = userInfo.id; // The current user's ID
-            const blockedUserId = selectedChatData._id; // The ID of the user being blocked (selected contact)
-
-            const response = await apiClient.post(BLOCK_USER, { userId, blockedUserId });
-            if (response.status === 200) {
-                toast.success("User blocked successfully");
-            } else {
-                toast.error("Failed to block the user");
-            }
-        } else {
-            toast.error("You can only block contacts, not channels.");
-        }
-    } catch (error) {
-        console.log("Error blocking user:", error.message);
-        toast.error("Error blocking the user.");
+  useEffect(() => {
+    // Check if the selected user is in the blockedUsers list
+    if (selectedChatType === "contact" && userInfo?.blockedUsers.includes(selectedChatData._id)) {
+      setIsBlocked(true);
+    } else {
+      setIsBlocked(false);
     }
-};
+  }, [userInfo, selectedChatData, selectedChatType]);
 
-
-const handleUnBlockUser = async () => {
+const handleToggleBlockUser = async () => {
   try {
-    const userId = userInfo.id; // The current user's ID
+    const userId = userInfo.id;
     const blockedUserId = selectedChatData._id;
-      const response = await apiClient.post(UN_BLOCK, { userId, blockedUserId });
-      if (response.status === 200) {
-          // Refresh userInfo from the server
-          const updatedUserInfo = await apiClient.get(USER_INFO);
-          setuserInfo(updatedUserInfo.data); // Update userInfo in your state
-          
-          toast.success("User unblocked successfully.");
-      } else {
-          toast.error("Failed to unblock the user.");
-      }
+    const action = isBlocked ? UN_BLOCK : BLOCK_USER;
+
+    const response = await apiClient.post(action, { userId, blockedUserId });
+    if (response.status === 200) {
+      // Update userInfo to reflect the new block/unblock status
+      const updatedUserInfo = await apiClient.get(USER_INFO);
+      setuserInfo(updatedUserInfo.data);
+
+      toast.success(`User ${isBlocked ? "unblocked" : "blocked"} successfully`);
+    } else {
+      toast.error(`Failed to ${isBlocked ? "unblock" : "block"} the user`);
+    }
   } catch (error) {
-      console.log("Error unblocking user:", error.message);
-      toast.error("Error unblocking the user.");
+    console.log(`Error ${isBlocked ? "unblocking" : "blocking"} user:`, error.message);
+    toast.error(`Error ${isBlocked ? "unblocking" : "blocking"} the user`);
   }
 };
 
@@ -96,18 +85,14 @@ const handleUnBlockUser = async () => {
 
       {/* Right side buttons */}
       <div className='flex gap-5'>
+       
         <button
           className='text-neutral-500 focus:border-none focus:outline-none focus:text-white duration-300 transition-all'
-          onClick={handleBlockUser}
+          onClick={handleToggleBlockUser}
         >
-          Block User
+         {isBlocked ? "Unblock User" : "Block User"}
         </button>
-        <button
-          className='text-neutral-500 focus:border-none focus:outline-none focus:text-white duration-300 transition-all'
-          onClick={handleUnBlockUser}
-        >
-          Unblock User
-        </button>
+       
         <button
           className='text-neutral-500 focus:border-none focus:outline-none focus:text-white duration-300 transition-all'
           onClick={handleDeleteAllChat}
