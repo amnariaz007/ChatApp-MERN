@@ -15,7 +15,7 @@ const ChatHeader = () => {
   const [isBlocked, setIsBlocked] = useState(false);
 
   useEffect(() => {
-    // Check if the selected user is in the blockedUsers list
+    
     if (selectedChatType === "contact" && userInfo?.blockedUsers.includes(selectedChatData._id)) {
       setIsBlocked(true);
     } else {
