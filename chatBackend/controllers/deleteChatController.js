@@ -3,26 +3,31 @@ const messageModel = require('../models/messageModel')
 
 
 
+// Backend example
 module.exports.DeleteAll = async (req, res) => {
-    try {
-        const { userId, deleteUserId } = req.body;
+  const { userId, deleteUserId } = req.body;
 
-        // Delete all messages between userId and deleteUserId
-        const result = await messageModel.deleteMany({
-            $or: [
-                { sender: userId, recipient: deleteUserId },
-                { sender: deleteUserId, recipient: userId }
-            ]
-        });
+  try {
+    // Update messages to add userId to the deletedFor array for each message
+    await messageModel.updateMany(
+      {
+        $or: [
+          { sender: userId, recipient: deleteUserId },
+          { sender: deleteUserId, recipient: userId }
+        ]
+      },
+      { $addToSet: { deletedFor: userId } } 
+    );
 
-        console.log("Deleted messages count:", result.deletedCount);
-        return res.status(200).json({ message: "All chat messages deleted successfully" });
-
-    } catch (err) {
-        console.log(err.message);
-        return res.status(500).send("Internal server error");
-    }
+    // Respond with success
+    res.status(200).json({ message: "Chat deleted successfully from your side" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
+
+  
+
 
 
 // Unblock user

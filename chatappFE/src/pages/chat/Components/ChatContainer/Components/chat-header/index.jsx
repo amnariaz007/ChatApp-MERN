@@ -5,13 +5,13 @@ import { getColor } from '@/lib/utils'
 import { HOST } from '@/utils/constants'
 import { IoReturnDownBack } from "react-icons/io5";
 import { apiClient } from '@/lib/api-client'
-import { BLOCK_USER , UN_BLOCK, USER_INFO} from '@/utils/constants'
+import { BLOCK_USER , UN_BLOCK, USER_INFO, DELETE_ALL_CHAT} from '@/utils/constants'
 import { toast } from 'sonner'
 import { useState, useEffect } from 'react'
 
 
 const ChatHeader = () => {
-  const { closeChat, selectedChatData, selectedChatType,userInfo , setuserInfo } = useAppStore();
+  const { closeChat, selectedChatData, selectedChatType,userInfo , setuserInfo, setSelectedChatMessages, deleteChat } = useAppStore();
   const [isBlocked, setIsBlocked] = useState(false);
 
   useEffect(() => {
@@ -45,7 +45,25 @@ const handleToggleBlockUser = async () => {
   }
 };
 
-  const handleDeleteAllChat = async () => {}
+const handleDeleteAllChat = async () => {
+  try {
+    const userId = userInfo.id;
+    const deleteUserId = selectedChatData._id;
+
+    const response = await apiClient.post(DELETE_ALL_CHAT, { userId, deleteUserId });
+    if (response.status === 200) {
+      // Optionally, clear messages in state
+      setSelectedChatMessages([]);
+      toast.success('Chat deleted successfully from your side.');
+    }
+  } catch (error) {
+    console.log('Error deleting chat', error.message);
+    toast.error('Error deleting chat');
+  }
+};
+
+
+
 
   return (
     <div className='h-[10vh] border-b-2 border-[#2f303b] flex items-center px-20 justify-between'>

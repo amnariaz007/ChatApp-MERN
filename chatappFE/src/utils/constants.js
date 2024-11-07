@@ -26,6 +26,13 @@ export const BLOCK_ROUTES = "api/block"
 export const BLOCK_USER = `${BLOCK_ROUTES}/block`
 export const UN_BLOCK = `${BLOCK_ROUTES}/unBlock`
 
+export const DELETE_ROUTES = "api/delete"
+export const DELETE_ALL_CHAT = `${DELETE_ROUTES}/DeleteAll`
+
+
+
+
+
 
 
 

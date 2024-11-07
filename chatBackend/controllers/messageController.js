@@ -1,6 +1,6 @@
 const messageModel = require('../models/messageModel');
 const { default: mongoose } = require('mongoose');
-const {renameSync, mkdirSync } = require('fs')
+const { renameSync, mkdirSync } = require('fs')
 
 
 module.exports.getMessages = async (req, res) => {
@@ -15,9 +15,9 @@ module.exports.getMessages = async (req, res) => {
         if (chatType === "contact") {
             messages = await messageModel.find({
                 $or: [
-                    { sender: id },
-                    { recipient: id }
-                ]
+                    { sender: id, deletedFor: { $ne: id } },
+                    { recipient: id, deletedFor: { $ne: id } }
+                ], 
             }).sort({ timestamp: 1 });
         } else if (chatType === "channel") {
             messages = await messageModel.find({
@@ -38,6 +38,7 @@ module.exports.getMessages = async (req, res) => {
 
 
 
+
 module.exports.fileUpload = async (req, res) => {
     try {
         if (!req.file) {
@@ -48,11 +49,11 @@ module.exports.fileUpload = async (req, res) => {
         let fileDir = `uploads/files/${date}`
         let fileName = `${fileDir}/${req.file.originalname}`;
 
-        mkdirSync(fileDir, {recursive: true})
+        mkdirSync(fileDir, { recursive: true })
         renameSync(req.file.path, fileName);
 
 
-        return res.status(200).json({  filePath: fileName  })
+        return res.status(200).json({ filePath: fileName })
     } catch (err) {
         console.log(err.message);
         return response.status(500).send("internal server error")
