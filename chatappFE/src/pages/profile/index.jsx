@@ -58,7 +58,7 @@ const Profile = () => {
       try {
         const response = await apiClient.post(UPDATE_PROFILE, { firstname, lastname, color: selectColor });
         if (response.status === 200 && response.data) {
-          userInfo({...response.data}); // update global user info
+          setuserInfo({...response.data}); // update global user info
           navigate("/chat"); // redirect to chat
         }
       } catch (err) {

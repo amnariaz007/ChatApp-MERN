@@ -23,22 +23,27 @@ const MessageContainer = () => {
   useEffect(() => {
     const getMessages = async () => {
       try {
-        const response = await apiClient.post(
-          GET_MESSAGE,
-          {
-            id: selectedChatData._id,
-            chatType: selectedChatType
-          }
-
-        );
+        const response = await apiClient.post(GET_MESSAGE, {
+          id: selectedChatData._id,
+          chatType: selectedChatType
+        });
+        console.log("API response messages:", response.data.messages); // Log API response
         if (response.data.messages) {
           setSelectedChatMessages(response.data.messages);
         }
+
+
+        const updatedMessagesResponse = await apiClient.post(GET_MESSAGE, {
+          id: selectedChatData._id,
+          chatType: selectedChatType
+        });
+
+
       } catch (err) {
         console.log(err.message);
       }
     };
-
+    
     if (selectedChatData._id && selectedChatType === "contact") {
       getMessages();
     }
@@ -49,6 +54,7 @@ const MessageContainer = () => {
 
 
   }, [selectedChatData, selectedChatType]);
+
 
 
 

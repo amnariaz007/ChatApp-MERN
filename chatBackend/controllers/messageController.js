@@ -3,6 +3,39 @@ const { default: mongoose } = require('mongoose');
 const { renameSync, mkdirSync } = require('fs')
 
 
+// module.exports.getMessages = async (req, res) => {
+//     try {
+//         const { id, chatType } = req.body;
+
+//         if (!id || !chatType) {
+//             return res.status(400).send("User ID and chat type are required.");
+//         }
+
+//         let messages;
+//         if (chatType === "contact") {
+//             messages = await messageModel.find({
+//                 $or: [
+//                     { sender: id, deletedFor: { $ne: id } },
+//                     { recipient: id, deletedFor: { $ne: id } }
+//                 ], 
+//             }).sort({ timestamp: 1 });
+//         } else if (chatType === "channel") {
+//             messages = await messageModel.find({
+//                 channelId: id
+//             }).sort({ timestamp: 1 });
+//         } else {
+//             return res.status(400).send("Invalid chat type.");
+//         }
+
+//         console.log(messages, "messages");
+//         return res.status(200).json({ messages });
+//     } catch (err) {
+//         console.log(err.message);
+//         return res.status(500).send("Internal server error");
+//     }
+// };
+
+
 module.exports.getMessages = async (req, res) => {
     try {
         const { id, chatType } = req.body;
@@ -15,27 +48,31 @@ module.exports.getMessages = async (req, res) => {
         if (chatType === "contact") {
             messages = await messageModel.find({
                 $or: [
-                    { sender: id, deletedFor: { $ne: id } },
-                    { recipient: id, deletedFor: { $ne: id } }
-                ], 
-            }).sort({ timestamp: 1 });
+                    { sender: id },
+                    { recipient: id }
+                ],
+                deletedFor: { $ne: id }  
+            })
+            
+            
+              
+            .sort({ timestamp: 1 });
         } else if (chatType === "channel") {
             messages = await messageModel.find({
-                channelId: id
+                channelId: id,
+                deletedFor: { $ne: id }  
             }).sort({ timestamp: 1 });
         } else {
             return res.status(400).send("Invalid chat type.");
         }
 
-        console.log(messages, "messages");
+        console.log(messages, "messages"); // Debug to see what messages are returned
         return res.status(200).json({ messages });
     } catch (err) {
         console.log(err.message);
         return res.status(500).send("Internal server error");
     }
 };
-
-
 
 
 

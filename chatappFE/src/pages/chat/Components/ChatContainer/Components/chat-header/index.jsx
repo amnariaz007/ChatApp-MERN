@@ -5,7 +5,7 @@ import { getColor } from '@/lib/utils'
 import { HOST } from '@/utils/constants'
 import { IoReturnDownBack } from "react-icons/io5";
 import { apiClient } from '@/lib/api-client'
-import { BLOCK_USER , UN_BLOCK, USER_INFO, DELETE_ALL_CHAT} from '@/utils/constants'
+import { BLOCK_USER , UN_BLOCK, USER_INFO, DELETE_ALL_CHAT, GET_MESSAGE} from '@/utils/constants'
 import { toast } from 'sonner'
 import { useState, useEffect } from 'react'
 
@@ -52,15 +52,16 @@ const handleDeleteAllChat = async () => {
 
     const response = await apiClient.post(DELETE_ALL_CHAT, { userId, deleteUserId });
     if (response.status === 200) {
-      // Optionally, clear messages in state
-      setSelectedChatMessages([]);
-      toast.success('Chat deleted successfully from your side.');
-    }
+      // Fetch the updated messages to ensure the state is updated
+    
+        toast.success('Chat deleted successfully from your side.');
+      }
   } catch (error) {
     console.log('Error deleting chat', error.message);
     toast.error('Error deleting chat');
   }
 };
+
 
 
 
