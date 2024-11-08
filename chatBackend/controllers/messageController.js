@@ -53,9 +53,6 @@ module.exports.getMessages = async (req, res) => {
                 ],
                 deletedFor: { $ne: id }  
             })
-            
-            
-              
             .sort({ timestamp: 1 });
         } else if (chatType === "channel") {
             messages = await messageModel.find({
@@ -84,6 +81,28 @@ module.exports.fileUpload = async (req, res) => {
 
         const date = Date.now();
         let fileDir = `uploads/files/${date}`
+        let fileName = `${fileDir}/${req.file.originalname}`;
+
+        mkdirSync(fileDir, { recursive: true })
+        renameSync(req.file.path, fileName);
+
+
+        return res.status(200).json({ filePath: fileName })
+    } catch (err) {
+        console.log(err.message);
+        return response.status(500).send("internal server error")
+    }
+
+};
+
+module.exports.voiceNote = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).send("file is required ");
+        }
+
+        const date = Date.now();
+        let fileDir = `uploads/voiceNotes/${date}`
         let fileName = `${fileDir}/${req.file.originalname}`;
 
         mkdirSync(fileDir, { recursive: true })

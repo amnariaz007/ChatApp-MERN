@@ -16,6 +16,10 @@ const messageSchema = ({
         enum: ["text", "file"],
         required : true
     },
+    voiceNoteUrl: { 
+        type: String, 
+        required: function() { return this.messageType === 'voice'; } // Required if messageType is "voice"
+    },
     content: { type: String, required: function() { return this.messageType !== 'file'; } },
     fileUrl: { type: String, required: function() { return this.messageType === 'file'; } },
     timestamp:{

@@ -1,48 +1,66 @@
 const express = require('express');
 const app = express();
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config(); 
 const cors = require('cors');
 const cookieparser = require('cookie-parser');
 const { default: mongoose } = require('mongoose');
-const authRoutes = require('./routes/AuthRoutes')
+const authRoutes = require('./routes/AuthRoutes');
 const contactRoutes = require('./routes/contactRoutes');
-const messageRoutes = require('./routes/messageRoutes')
+const messageRoutes = require('./routes/messageRoutes');
 const setupSocket = require('./socket');
 const channelRoutes = require('./routes/channelRoutes');
 const blockRoutes = require('./routes/blockRoutes');
 const deleteRoutes = require('./routes/deleteRoutes');
 
 
-//middlewares
+// Ensure that the uploads directories exist
+const directories = [
+  "uploads/profiles",
+  "uploads/files",
+  "uploads/voiceNotes"
+];
+
+directories.forEach(dir => {
+  const dirPath = path.join(__dirname, dir);
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+  }
+});
+
+// Middlewares
 app.use(cors({
-    origin: [process.env.ORIGIN],
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    credentials: true
+  origin: [process.env.ORIGIN],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  credentials: true
 }));
 
-app.use("/uploads/profiles", express.static("uploads/profiles"))
-app.use("/uploads/files", express.static("uploads/files"))
+app.use("/uploads/profiles", express.static("uploads/profiles"));
+app.use("/uploads/files", express.static("uploads/files"));
+app.use("/uploads/voiceNotes", express.static("uploads/voiceNotes"));
 app.use(express.json());
 app.use(cookieparser());
-const port = process.env.PORT || 3001
+
+const port = process.env.PORT || 3000;
 const db = process.env.MOONGODB_URI;
 
-//ApiRoutes
-
+// API Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/contact/', contactRoutes)
-app.use('/api/message/', messageRoutes)
-app.use('/api/channel/', channelRoutes)
-app.use('/api/block/', blockRoutes)
-app.use('/api/delete/', deleteRoutes)
+app.use('/api/contact/', contactRoutes);
+app.use('/api/message/', messageRoutes);
+app.use('/api/channel/', channelRoutes);
+app.use('/api/block/', blockRoutes);
+app.use('/api/delete/', deleteRoutes);
 
 
 
-const server = app.listen(port, ()=>{
-    console.log(`server is running at http://localhost:${port}`)
-})
+const server = app.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}`);
+});
 
 setupSocket(server);
 
 mongoose.connect(db)
-.then(()=> console.log("Db connected")).catch(err=> console.log(err));
+  .then(() => console.log("DB connected"))
+  .catch(err => console.log(err));
