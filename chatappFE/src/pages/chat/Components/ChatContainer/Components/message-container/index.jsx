@@ -33,12 +33,6 @@ const MessageContainer = () => {
         }
 
 
-        const updatedMessagesResponse = await apiClient.post(GET_MESSAGE, {
-          id: selectedChatData._id,
-          chatType: selectedChatType
-        });
-
-
       } catch (err) {
         console.log(err.message);
       }
