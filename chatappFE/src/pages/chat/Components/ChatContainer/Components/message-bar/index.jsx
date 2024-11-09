@@ -5,10 +5,11 @@ import { IoSend } from 'react-icons/io5'
 import EmojiPicker from 'emoji-picker-react'
 import { useSocket } from '@/context/SocketContext'
 import { useAppStore } from '@/store'
-import { apiClient } from '@/lib/api-client'
 import { FILE_UPLOAD } from '@/utils/constants'
 import { MdKeyboardVoice } from "react-icons/md";
 import { toast } from 'sonner'
+import { apiClient } from '@/lib/api-client'
+import {VOICE_UPLOAD} from '@/utils/constants'
 
 
 
@@ -91,7 +92,7 @@ const MessageBar = () => {
         const response = await apiClient.post(FILE_UPLOAD, formData);
         console.log("Uploaded file path:", response.data.filePath); // Check the file URL here
         if (response.status === 200 && response.data.filePath) {
-          if (selectedChatData === "contact") {
+          if (selectedChatType === "contact") {
 
             socket.emit("sendMessage", {
               sender: userInfo.id,
@@ -116,9 +117,7 @@ const MessageBar = () => {
     }
   };
 
-  const hadleVoiceNotek = async () => {
 
-  }
 
 
   useEffect(() => {
@@ -157,18 +156,44 @@ const MessageBar = () => {
   };
 
   const uploadVoiceNote = async () => {
-    if (!audioBlob) return;
-
+    if (!audioBlob) {
+      console.error("No audioBlob found for upload.");
+      return;
+    }
+  
     const formData = new FormData();
-    formData.append('voiceNote', audioBlob, 'voiceNote.webm');
+    formData.append('voice', audioBlob, 'voice.webm');
+  
+    try {
+      const response = await apiClient.post(VOICE_UPLOAD, formData);
+      console.log("Voice note upload response:", response.filePath);
+  
+      if (response.status === 200 && response.data.filePath) {
+  
+        // Emit the voice note message using socket
+        if (selectedChatType === "contact") {
 
-    await fetch('/api/voice-notes', {
-      method: 'POST',
-      body: formData,
-    });
-
-    setAudioBlob(null);  // Clear after upload
+          socket.emit("sendMessage", {
+            sender: userInfo.id,
+            recipient: selectedChatData._id,
+            messageType: "file",
+            fileUrl: response.data.filePath,  // Ensure fileUrl is present
+          });
+        }
+  
+        setAudioBlob(null); // Reset audio after successful upload
+        toast.success("Voice note sent!");
+      } else {
+        toast.error("Failed to send voice note.");
+      }
+    } catch (error) {
+      console.error("Error uploading voice note:", error);
+      toast.error("Failed to send voice note.");
+    }
   };
+  
+  
+
 
 
   return (

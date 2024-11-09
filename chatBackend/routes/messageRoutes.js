@@ -11,7 +11,7 @@ const messageRoutes = router
 
 messageRoutes.post('/getMessages', isLoggedIn, getMessages );
 messageRoutes.post('/fileUpload', isLoggedIn,  upload.single("file")  , fileUpload );
-messageRoutes.post('/voiceNote', isLoggedIn,  upload1.single("voiceNotes")  , voiceNote );
+messageRoutes.post('/voiceNote', isLoggedIn,  upload1.single("voice")  , voiceNote );
 
 
 

@@ -17,6 +17,7 @@ export const GET_ALL_CONTACT = `${CONTACT_ROUTES}/getAllContacts`
 export const MESSAGE_ROUTES = "api/message"
 export const GET_MESSAGE = `${MESSAGE_ROUTES}/getMessages`
 export const FILE_UPLOAD = `${MESSAGE_ROUTES}/fileUpload`
+export const VOICE_UPLOAD = `${MESSAGE_ROUTES}/voiceNote`
 
 export const CHANNEL_ROUTES = "api/channel"
 export const CREATE_CHANNEL = `${CHANNEL_ROUTES}/createChannel`
